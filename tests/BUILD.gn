@@ -1,0 +1,14 @@
+executable("websocket_client_test") {
+  sources = [
+    "websocket_client_test.cc",
+    "../src/websocket_client.cc",
+  ]
+
+  deps = []
+
+  if (is_debug) {
+    configs += [ "//:debug" ]
+  } else {
+    configs += [ "//:release" ]
+  }
+}

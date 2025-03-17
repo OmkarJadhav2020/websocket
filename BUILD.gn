@@ -1,0 +1,53 @@
+# Define common configurations
+config("compiler_defaults") {
+  cflags = [
+    "-Wall",
+    "-Wextra",
+    "-std=c++17",
+  ]
+}
+
+config("debug_config") {
+  cflags = [
+    "-g",
+    "-O0",
+    "-DDEBUG",
+  ]
+}
+
+config("release_config") {
+  cflags = [
+    "-O2",
+    "-DNDEBUG",
+  ]
+}
+
+# Define the main executable
+executable("websocket_client") {
+  sources = [
+    "src/main.cc",
+    "src/websocket_client.cc",
+    "src/cli_handler.cc",
+  ]
+  
+  include_dirs = [
+    "//",
+    "//third_party",
+  ]
+  
+  libs = [
+    "websockets",
+    "ssl",
+    "crypto",
+    "z",
+    "pthread",
+  ]
+  
+  configs = [ ":compiler_defaults" ]
+  
+  if (is_debug) {
+    configs += [ ":debug_config" ]
+  } else {
+    configs += [ ":release_config" ]
+  }
+}
