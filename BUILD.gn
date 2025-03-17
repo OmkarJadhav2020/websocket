@@ -22,12 +22,16 @@ config("release_config") {
   ]
 }
 
-# Define the main executable
-executable("websocket_client") {
+# Define a source set for the WebSocket client code
+source_set("websocket_client_lib") {
   sources = [
-    "src/main.cc",
     "src/websocket_client.cc",
     "src/cli_handler.cc",
+  ]
+  
+  public = [
+    "src/websocket_client.h",
+    "src/cli_handler.h",
   ]
   
   include_dirs = [
@@ -41,6 +45,55 @@ executable("websocket_client") {
     "crypto",
     "z",
     "pthread",
+  ]
+  
+  configs = [ ":compiler_defaults" ]
+  
+  if (is_debug) {
+    configs += [ ":debug_config" ]
+  } else {
+    configs += [ ":release_config" ]
+  }
+}
+
+# Define the main executable
+executable("websocket_client") {
+  sources = [
+    "src/main.cc",
+    
+  ]
+  
+  include_dirs = [
+    "//",
+    "//third_party",
+  ]
+  
+  deps = [
+    ":websocket_client_lib",
+  ]
+  
+  configs = [ ":compiler_defaults" ]
+  
+  if (is_debug) {
+    configs += [ ":debug_config" ]
+  } else {
+    configs += [ ":release_config" ]
+  }
+}
+
+# Define the test executable
+executable("websocket_client_test") {
+  sources = [
+    "tests/websocket_client_test.cc",
+  ]
+  
+  include_dirs = [
+    "//",
+    "//third_party",
+  ]
+  
+  deps = [
+    ":websocket_client_lib",
   ]
   
   configs = [ ":compiler_defaults" ]
